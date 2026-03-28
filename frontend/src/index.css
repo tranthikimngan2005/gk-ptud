@@ -1,0 +1,177 @@
+/* --- Cấu hình chung --- */
+:root {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #ffffff;
+  color: #3c4043;
+}
+
+body { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* --- Màn hình Đăng nhập (Auth) --- */
+.auth-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #f1f3f4;
+}
+
+.auth-box form {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(60,64,67,0.3);
+  width: 300px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* --- Giao diện chính (Main) --- */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e8eaed;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+/* --- Thanh công cụ (Search & Upload) --- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.controls input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 15px;
+  border: 1px solid #dadce0;
+  border-radius: 20px;
+  outline: none;
+}
+
+.controls form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* --- Lưới ảnh Masonry (Google Photos style) --- */
+.masonry-grid {
+  column-count: 4; /* Chia 4 cột */
+  column-gap: 15px;
+}
+
+.masonry-item {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 15px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e8eaed;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.masonry-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.masonry-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.masonry-item .info {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info h4 { margin: 0; font-size: 14px; font-weight: 500; }
+
+/* --- Nút Xóa/Sửa nhỏ gọn --- */
+.info button {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  border: 1px solid #dadce0;
+  background: white;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.info button:hover { background: #f1f3f4; }
+
+/* --- Modal Xem chi tiết & Form Sửa --- */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal textarea {
+  height: 80px;
+  padding: 10px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) { .masonry-grid { column-count: 3; } }
+@media (max-width: 600px) { .masonry-grid { column-count: 2; } }

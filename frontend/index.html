@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gallery App </title>
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f4f7f6; 
+            margin: 0; 
+            padding: 20px; 
+            color: #333;
+        }
+        .container { 
+            max-width: 1100px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+        .header-flex { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+        .controls { 
+            background: #fafafa; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 30px; 
+        }
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+        .upload-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 25px; 
+        }
+        .card { 
+            background: white;
+            border-radius: 12px; 
+            overflow: hidden; 
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-body { padding: 15px; text-align: center; }
+        .card-body h4 { margin: 10px 0; color: #1a73e8; }
+        
+        input[type="text"], input[type="password"], input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button { 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-primary { background: #1a73e8; color: white; }
+        .btn-danger { background: #ea4335; color: white; width: 100%; margin-top: 10px; }
+        .btn-logout { background: #f1f3f4; color: #5f6368; }
+        
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const API = "http://127.0.0.1:8000";
+
+        function App() {
+            const [token, setToken] = React.useState(localStorage.getItem("token"));
+            const [photos, setPhotos] = React.useState([]);
+            const [search, setSearch] = React.useState("");
+
+            const loadPhotos = async () => {
+                if (!token) return;
+                try {
+                    const res = await axios.get(`${API}/photos?q=${search}`);
+                    setPhotos(res.data);
+                } catch (err) { console.error("Lỗi lấy ảnh:", err); }
+            };
+
+            React.useEffect(() => { loadPhotos(); }, [token, search]);
+
+            const handleLogin = async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                try {
+                    const res = await axios.post(`${API}/login`, fd);
+                    localStorage.setItem("token", res.data.token);
+                    setToken(res.data.token);
+                } catch (err) { alert("Sai tài khoản hoặc mật khẩu!"); }
+            };
+
+            const handleUpload = async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                try {
+                    await axios.post(`${API}/photos`, fd);
+                    alert("Tải lên thành công!");
+                    loadPhotos();
+                    e.target.reset();
+                } catch (err) { alert("Lỗi khi tải ảnh!"); }
+            };
+
+            const handleDelete = async (id) => {
+                if(confirm("Bạn có chắc muốn xóa ảnh này?")) {
+                    await axios.delete(`${API}/photos/${id}`);
+                    loadPhotos();
+                }
+            };
+
+            if (!token) return (
+                <div className="container login-box">
+                    <h2>🔑 Đăng nhập hệ thống</h2>
+                    <form onSubmit={handleLogin}>
+                        <input name="username" placeholder="Tên đăng nhập" style={{width:'100%', marginBottom:'10px'}} required /><br/>
+                        <input name="password" type="password" placeholder="Mật khẩu" style={{width:'100%', marginBottom:'10px'}} required /><br/>
+                        <button type="submit" className="btn-primary" style={{width:'100%'}}>Vào Thư Viện</button>
+                    </form>
+                </div>
+            );
+
+            return (
+                <div className="container">
+                    <div className="header-flex">
+                        <h2>🖼️ Thư viện ảnh của Ngân</h2>
+                        <button className="btn-logout" onClick={() => {localStorage.clear(); setToken(null);}}>Thoát</button>
+                    </div>
+
+                    <div className="controls">
+                        <input 
+                            className="search-box"
+                            placeholder="🔍 Tìm kiếm ảnh theo tên..." 
+                            onChange={e => setSearch(e.target.value)} 
+                        />
+                        <form className="upload-form" onSubmit={handleUpload}>
+                            <input name="title" placeholder="Tên ảnh" required />
+                            <input type="file" name="file" required />
+                            <button type="submit" className="btn-primary">Tải lên ngay</button>
+                        </form>
+                    </div>
+
+                    <div className="grid">
+                        {photos.map(p => (
+                            <div className="card" key={p.id}>
+                                <img src={`${API}/${p.image_url}`} alt={p.title} />
+                                <div className="card-body">
+                                    <h4>{p.title}</h4>
+                                    <button className="btn-danger" onClick={() => handleDelete(p.id)}>Xóa ảnh</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {photos.length === 0 && <p style={{textAlign:'center', color:'#999'}}>Không tìm thấy ảnh nào...</p>}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
